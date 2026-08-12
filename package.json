@@ -1,0 +1,22 @@
+{
+	"name": "pp-workspace",
+	"private": true,
+	"type": "module",
+	"packageManager": "pnpm@11.21.0",
+	"engines": {
+		"node": ">=24.0.0"
+	},
+	"scripts": {
+		"build": "pnpm -r build",
+		"check": "pnpm -r check",
+		"dev": "pnpm --filter @pp/web dev",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
+		"lint": "pnpm -r lint",
+		"test": "pnpm -r test"
+	},
+	"devDependencies": {
+		"prettier": "^3.9.0",
+		"prettier-plugin-svelte": "^4.1.1"
+	}
+}

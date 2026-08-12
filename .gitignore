@@ -1,0 +1,18 @@
+node_modules/
+.DS_Store
+*.log
+
+# Build output
+.svelte-kit/
+build/
+dist/
+
+# Local secrets and persistent data
+.env
+.env.*
+!.env.example
+!.env.test
+data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal

@@ -1,0 +1,32 @@
+{
+	"name": "pp",
+	"version": "0.0.0",
+	"description": "Publish an HTML file and get a public URL.",
+	"type": "module",
+	"bin": {
+		"pp": "dist/index.js"
+	},
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"engines": {
+		"node": ">=24.0.0"
+	},
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json",
+		"check": "tsc --noEmit",
+		"dev": "tsc -p tsconfig.build.json --pretty false && node dist/index.js",
+		"lint": "eslint src test",
+		"test": "vitest run"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@types/node": "^24.10.13",
+		"eslint": "^10.8.1",
+		"globals": "^17.4.0",
+		"typescript": "^6.0.3",
+		"typescript-eslint": "^8.67.0",
+		"vitest": "^4.1.10"
+	}
+}
