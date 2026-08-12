@@ -6,7 +6,7 @@
 
 - `apps/web` — SvelteKit application, HTTP API, dashboard, authentication, HTML serving, and SQLite persistence.
 - `packages/cli` — dependency-free TypeScript CLI intended to be invoked as `npx pp`.
-- `Dockerfile` and `railway.json` — single-replica container deployment with persistent SQLite storage.
+- `Dockerfile` and `compose.yml` — single-replica container deployment with persistent SQLite storage.
 
 ## Technologies
 

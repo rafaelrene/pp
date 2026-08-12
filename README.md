@@ -77,27 +77,52 @@ Shoo automatically registers an app from its callback origin. No client ID or cl
 
 The published CLI should target the hosted service by default. To use another deployment, pass `--api-url https://pp.example.com` or set `PP_API_URL=https://pp.example.com`.
 
-## Production
+## Self-host on Proxmox VE
 
-Build and run the Node adapter output directly:
+The simplest reliable setup is a small Debian VM with Docker Engine and the
+Docker Compose plugin. Keeping Docker inside a guest avoids changing the PVE
+host; an LXC also works, but requires container nesting.
 
-```sh
-pnpm build
-HOST=0.0.0.0 PORT=3000 node apps/web/build
-```
-
-Or use the included container:
+Create the production configuration:
 
 ```sh
-docker build -t pp .
-docker run --rm -p 3000:3000 \
-  -e ORIGIN=https://pp.example.com \
-  -e SESSION_SECRET="$(openssl rand -base64 32)" \
-  -v pp-data:/data \
-  pp
+cp .env.production.example .env.production
+openssl rand -base64 32
 ```
 
-The Docker image defaults `DATABASE_PATH` to `/data/pp.sqlite`. On Railway or another container host, mount a persistent volume at `/data`, set `ORIGIN` and `SESSION_SECRET`, and route the platform port to the app. Keep this SQLite deployment to one application replica. Local runtime versions remain pinned by mise; the container uses the matching pinned Node and pnpm versions directly.
+Put the generated value in `SESSION_SECRET`, set `ORIGIN` to the exact public
+HTTPS URL, then build and start the service:
+
+```sh
+docker compose up -d --build
+docker compose ps
+curl http://127.0.0.1:3000/healthz
+```
+
+`compose.yml` binds pp to localhost, persists SQLite in the `pp-data` volume,
+checks `/healthz`, restarts after failures and reboots, and runs with a read-only
+root filesystem and no Linux capabilities. Keep exactly one application replica;
+SQLite is intentionally the whole persistence model.
+
+Terminate HTTPS with a reverse proxy on the same VM. A minimal Caddy site is:
+
+```caddyfile
+pp.example.com {
+	reverse_proxy 127.0.0.1:3000
+}
+```
+
+Point DNS at your public IP and forward ports 80 and 443 to the VM. If the
+reverse proxy runs on another machine, change the Compose port mapping to
+`3000:3000` and restrict access to that port with the VM firewall.
+
+To deploy an update, pull or copy the new source and run
+`docker compose up -d --build` again. Back up the PVE guest; for a guaranteed
+consistent SQLite snapshot, stop the service during the backup with
+`docker compose stop`, then start it again with `docker compose start`.
+
+Docker, Compose, and Caddy are free software. This setup has no hosting fee
+beyond the PVE machine, electricity, and any domain name you choose to use.
 
 ## Security model
 
