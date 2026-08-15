@@ -1,8 +1,8 @@
 import { command, getRequestEvent, query } from '$app/server';
 import { error } from '@sveltejs/kit';
 import * as v from 'valibot';
-import { deleteAccountDraft, listAccountDrafts } from '$lib/server/database';
-import { publicDraftUrl } from '$lib/server/public-url';
+import { deleteAccountDraft, listAccountDrafts } from '#lib/server/database.js';
+import { publicDraftUrl } from '#lib/server/public-url.js';
 
 export const getDrafts = query(() => {
 	const event = getRequestEvent();

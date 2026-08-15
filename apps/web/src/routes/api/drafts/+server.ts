@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { authenticateApiKey, listAccountDrafts } from '$lib/server/database';
-import { publicDraftUrl } from '$lib/server/public-url';
+import { authenticateApiKey, listAccountDrafts } from '#lib/server/database.js';
+import { publicDraftUrl } from '#lib/server/public-url.js';
 
 export const GET: RequestHandler = ({ request, url }) => {
 	const identity = authenticateApiKey(request.headers.get('authorization'));

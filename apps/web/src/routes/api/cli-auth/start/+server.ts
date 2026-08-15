@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { getPublicOrigin } from '$lib/server/config';
-import { createCliAuthRequest } from '$lib/server/database';
+import { getPublicOrigin } from '#lib/server/config.js';
+import { createCliAuthRequest } from '#lib/server/database.js';
 
 export const POST: RequestHandler = ({ url }) => {
 	const request = createCliAuthRequest();

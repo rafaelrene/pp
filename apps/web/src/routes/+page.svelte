@@ -31,7 +31,9 @@
 	</div>
 
 	<p class="quiet">
-		Already published? <a href={resolve('/dashboard')}>Open your drafts</a> ·
-		<a href={resolve('/healthz')}>Status</a>
+		Already published?
+		<a href={resolve('dashboard')}>Open your drafts</a>
+		·
+		<a href={resolve('healthz')}>Status</a>
 	</p>
 </main>

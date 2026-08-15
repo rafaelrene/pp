@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getCliAuthRequest, normalizeUserCode } from '$lib/server/database';
+import { getCliAuthRequest, normalizeUserCode } from '#lib/server/database.js';
 
 export const load: PageServerLoad = ({ locals, url }) => {
 	const userCode = normalizeUserCode(url.searchParams.get('user_code') || '');

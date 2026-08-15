@@ -19,10 +19,9 @@
 		<div class="panel-actions">
 			<a
 				class="button"
-				href={resolve(`/auth/sign-in?next=${encodeURIComponent(data.next)}`)}
+				href={resolve(`auth/sign-in?next=${encodeURIComponent(data.next)}`)}
+				>Continue with Shoo</a
 			>
-				Continue with Shoo
-			</a>
 		</div>
 	</section>
 </main>

@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { pollCliAuthRequest } from '$lib/server/database';
+import { pollCliAuthRequest } from '#lib/server/database.js';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const body: unknown = await request.json().catch(() => null);

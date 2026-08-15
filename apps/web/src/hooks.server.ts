@@ -1,7 +1,7 @@
-import type { Handle } from '@sveltejs/kit';
-import { draftResponse } from '$lib/server/draft-response';
-import { draftIdFromHostname } from '$lib/server/public-url';
-import { readSession } from '$lib/server/session';
+import type { Handle } from '@sveltejs/kit/hooks';
+import { draftResponse } from '#lib/server/draft-response.js';
+import { draftIdFromHostname } from '#lib/server/public-url.js';
+import { readSession } from '#lib/server/session.js';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const hostedDraftId = draftIdFromHostname(event.url.hostname);

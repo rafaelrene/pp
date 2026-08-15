@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { authenticateApiKey } from '$lib/server/database';
+import { authenticateApiKey } from '#lib/server/database.js';
 
 export const GET: RequestHandler = ({ request }) => {
 	const identity = authenticateApiKey(request.headers.get('authorization'));

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import favicon from '$lib/assets/favicon.svg';
+	import favicon from '#lib/assets/favicon.svg';
 	import '../app.css';
 
 	let { children, data } = $props();
@@ -20,12 +20,12 @@
 	>
 	<nav aria-label="Main navigation">
 		{#if data.session}
-			<a href={resolve('/dashboard')}>Drafts</a>
-			<form method="POST" action={resolve('/auth/sign-out')}>
+			<a href={resolve('dashboard')}>Drafts</a>
+			<form method="POST" action={resolve('auth/sign-out')}>
 				<button class="text-button" type="submit">Sign out</button>
 			</form>
 		{:else}
-			<a href={resolve('/login')}>Sign in</a>
+			<a href={resolve('login')}>Sign in</a>
 		{/if}
 	</nav>
 </header>

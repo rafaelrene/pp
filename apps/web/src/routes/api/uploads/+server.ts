@@ -6,9 +6,9 @@ import {
 	DraftAccessError,
 	saveDraft,
 	type UploadMetadata
-} from '$lib/server/database';
-import { validateHtml } from '$lib/server/html-policy';
-import { publicDraftUrl, rawDraftUrl } from '$lib/server/public-url';
+} from '#lib/server/database.js';
+import { validateHtml } from '#lib/server/html-policy.js';
+import { publicDraftUrl, rawDraftUrl } from '#lib/server/public-url.js';
 
 const optionalText = (length: number) =>
 	v.optional(v.pipe(v.string(), v.maxLength(length)));

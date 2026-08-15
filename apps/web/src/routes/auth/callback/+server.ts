@@ -1,9 +1,13 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { getPublicOrigin } from '$lib/server/config';
-import { findOrCreateShooAccount } from '$lib/server/database';
-import { exchangeShooCode, verifyShooToken } from '$lib/server/shoo';
-import { clearAuthState, readAuthState, setSession } from '$lib/server/session';
+import { getPublicOrigin } from '#lib/server/config.js';
+import { findOrCreateShooAccount } from '#lib/server/database.js';
+import { exchangeShooCode, verifyShooToken } from '#lib/server/shoo.js';
+import {
+	clearAuthState,
+	readAuthState,
+	setSession
+} from '#lib/server/session.js';
 
 export const GET: RequestHandler = async ({ cookies, url }) => {
 	const authState = readAuthState(cookies);

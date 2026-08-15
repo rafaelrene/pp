@@ -6,7 +6,7 @@ import {
 	CliAuthError,
 	denyCliAuthRequest,
 	getAccount
-} from '$lib/server/database';
+} from '#lib/server/database.js';
 
 const userCode = v.pipe(v.string(), v.regex(/^[A-Za-z0-9-]{8,9}$/));
 
