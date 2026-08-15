@@ -1,7 +1,7 @@
 import { mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
-import { getDatabasePath } from './config';
+import { getDatabasePath, isAllowedEmail } from './config';
 import { randomToken, sha256 } from './crypto';
 
 type DatabaseGlobal = typeof globalThis & { __ppDatabase?: DatabaseSync };
@@ -239,12 +239,12 @@ export function authenticateApiKey(
 	if (!token) return null;
 
 	const row = getRow(
-		`SELECT k.id AS key_id, k.account_id, a.name AS account_name
+		`SELECT k.id AS key_id, k.account_id, a.name AS account_name, a.email
 		 FROM api_keys k JOIN accounts a ON a.id = k.account_id
 		 WHERE k.key_hash = ? AND k.revoked_at IS NULL`,
 		[sha256(token)]
 	);
-	if (!row) return null;
+	if (!row || !isAllowedEmail(optionalString(row, 'email'))) return null;
 	const keyId = requiredString(row, 'key_id');
 	database
 		.prepare('UPDATE api_keys SET last_used_at = ? WHERE id = ?')
@@ -372,12 +372,22 @@ export function deleteAccountDraft(
 	draftId: string,
 	accountId: string
 ): boolean {
-	const result = database
-		.prepare(
-			'UPDATE drafts SET deleted_at = ?, updated_at = ? WHERE id = ? AND account_id = ?'
-		)
-		.run(Date.now(), Date.now(), draftId, accountId);
-	return result.changes === 1;
+	return transaction(() => {
+		database
+			.prepare(
+				`DELETE FROM draft_versions WHERE draft_id IN
+				 (SELECT id FROM drafts WHERE id = ? AND account_id = ?)`
+			)
+			.run(draftId, accountId);
+		const result = database
+			.prepare('DELETE FROM drafts WHERE id = ? AND account_id = ?')
+			.run(draftId, accountId);
+		return result.changes === 1;
+	});
+}
+
+export function checkDatabase(): void {
+	database.prepare('SELECT 1').get();
 }
 
 export function getAccount(accountId: string): Account | null {

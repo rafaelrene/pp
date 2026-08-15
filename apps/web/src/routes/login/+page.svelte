@@ -13,7 +13,9 @@
 		<p class="muted">
 			Shoo handles identity. pp never sees or stores your Google credentials.
 		</p>
-		{#if data.error}
+		{#if data.error === 'not-allowed'}
+			<p role="alert">This account is not allowed to use this deployment.</p>
+		{:else if data.error}
 			<p role="alert">Sign-in didn’t complete. Please try again.</p>
 		{/if}
 		<div class="panel-actions">

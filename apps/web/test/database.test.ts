@@ -6,7 +6,7 @@ import { afterAll, describe, expect, it } from 'vitest';
 const directory = mkdtempSync(join(tmpdir(), 'pp-database-test-'));
 process.env.DATABASE_PATH = join(directory, 'pp.sqlite');
 
-const databaseModule = await import('$lib/server/database');
+const databaseModule = await import('#lib/server/database.js');
 
 afterAll(() => {
 	databaseModule.database.close();
@@ -14,7 +14,7 @@ afterAll(() => {
 });
 
 describe('draft ownership', () => {
-	it('claims an anonymous draft on an authenticated update', () => {
+	it('claims an anonymous draft and permanently deletes every version', () => {
 		const anonymousDraft = databaseModule.saveDraft({
 			html: '<h1>Anonymous</h1>',
 			filename: 'plan.html',
@@ -60,5 +60,21 @@ describe('draft ownership', () => {
 				metadata: {}
 			})
 		).toThrow('Draft not found.');
+
+		expect(
+			databaseModule.deleteAccountDraft(anonymousDraft.draftId, account.id)
+		).toBe(true);
+		expect(
+			databaseModule.database
+				.prepare('SELECT COUNT(*) AS count FROM drafts WHERE id = ?')
+				.get(anonymousDraft.draftId)
+		).toEqual({ count: 0 });
+		expect(
+			databaseModule.database
+				.prepare(
+					'SELECT COUNT(*) AS count FROM draft_versions WHERE draft_id = ?'
+				)
+				.get(anonymousDraft.draftId)
+		).toEqual({ count: 0 });
 	});
 });

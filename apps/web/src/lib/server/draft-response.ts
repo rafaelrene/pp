@@ -19,6 +19,7 @@ export function draftResponse(draftId: string, version?: number): Response {
 			'content-type': 'text/html; charset=utf-8',
 			'cache-control': 'no-store',
 			'content-security-policy': draftContentSecurityPolicy,
+			'x-robots-tag': 'noindex, nofollow',
 			'x-content-type-options': 'nosniff',
 			'x-pp-draft-id': draft.draftId,
 			'x-pp-draft-version': String(draft.version)

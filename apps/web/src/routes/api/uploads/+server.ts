@@ -7,6 +7,7 @@ import {
 	saveDraft,
 	type UploadMetadata
 } from '#lib/server/database.js';
+import { getAnonymousUploadsEnabled } from '#lib/server/config.js';
 import { validateHtml } from '#lib/server/html-policy.js';
 import { publicDraftUrl, rawDraftUrl } from '#lib/server/public-url.js';
 
@@ -39,6 +40,9 @@ export const POST: RequestHandler = async ({ request, url }) => {
 	const identity = authenticateApiKey(authorization);
 	if (authorization && !identity)
 		return json({ error: 'Invalid API token.' }, { status: 401 });
+	if (!identity && !getAnonymousUploadsEnabled()) {
+		return json({ error: 'Authentication required.' }, { status: 401 });
+	}
 
 	const rawBody: unknown = await request.json().catch(() => null);
 	const parsed = v.safeParse(uploadSchema, rawBody);

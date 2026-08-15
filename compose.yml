@@ -7,8 +7,8 @@ services:
     init: true
     env_file: .env.production
     ports:
-      # Keep pp private to this machine; terminate HTTPS with a local reverse proxy.
-      - '127.0.0.1:3000:3000'
+      # Keep the loopback default; set PP_BIND_ADDRESS when proxying from another host.
+      - '${PP_BIND_ADDRESS:-127.0.0.1}:3000:3000'
     volumes:
       - pp-data:/data
     read_only: true

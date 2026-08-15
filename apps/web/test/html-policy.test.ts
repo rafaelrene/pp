@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { validateHtml } from '$lib/server/html-policy';
+import { validateHtml } from '#lib/server/html-policy.js';
 
 describe('HTML upload policy', () => {
 	it('accepts a self-contained static document', () => {

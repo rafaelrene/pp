@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { getPublicOrigin } from '#lib/server/config.js';
+import { getPublicOrigin, isAllowedEmail } from '#lib/server/config.js';
 import { findOrCreateShooAccount } from '#lib/server/database.js';
 import { exchangeShooCode, verifyShooToken } from '#lib/server/shoo.js';
 import {
@@ -27,10 +27,12 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 			redirectUri: `${origin}/auth/callback`
 		});
 		const claims = await verifyShooToken(idToken, origin);
+		const email = claimText(claims.email);
+		if (!isAllowedEmail(email)) throw new ShooAccessError();
 		const account = findOrCreateShooAccount({
 			subject: String(claims.pairwise_sub),
 			name: claimText(claims.name),
-			email: claimText(claims.email),
+			email,
 			pictureUrl: claimText(claims.picture)
 		});
 		setSession(cookies, {
@@ -40,12 +42,16 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 			pictureUrl: account.pictureUrl
 		});
 	} catch (error) {
+		if (error instanceof ShooAccessError)
+			redirect(303, '/login?error=not-allowed');
 		console.error('Shoo sign-in failed:', error);
 		redirect(303, '/login?error=failed');
 	}
 
 	redirect(303, authState.next);
 };
+
+class ShooAccessError extends Error {}
 
 function claimText(value: unknown): string | null {
 	return typeof value === 'string' && value.trim() ? value.trim() : null;

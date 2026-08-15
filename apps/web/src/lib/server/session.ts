@@ -1,5 +1,5 @@
 import type { Cookies } from '@sveltejs/kit';
-import { getSessionSecret } from './config';
+import { getSessionSecret, isAllowedEmail } from './config';
 import { signValue, verifyValue } from './crypto';
 
 const SESSION_COOKIE = 'pp_session';
@@ -35,6 +35,7 @@ export function readSession(cookies: Cookies): Session | null {
 	) {
 		return null;
 	}
+	if (!isAllowedEmail(payload.email)) return null;
 
 	return {
 		accountId: payload.accountId,

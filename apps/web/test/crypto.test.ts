@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { signValue, verifyValue } from '$lib/server/crypto';
+import { signValue, verifyValue } from '#lib/server/crypto.js';
 
 describe('signed values', () => {
 	it('round-trips an unexpired payload', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { safeNextPath } from '$lib/server/public-url';
+import { safeNextPath } from '#lib/server/public-url.js';
 
 describe('safeNextPath', () => {
 	it('keeps local routes', () => {
