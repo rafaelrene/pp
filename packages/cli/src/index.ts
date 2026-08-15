@@ -68,22 +68,41 @@ async function upload(
 	console.log(
 		draftId ? `Publishing a new version of ${draftId}…` : 'Publishing…'
 	);
-	const result = await api.upload({
+	const uploadInput = {
 		html,
 		filename: basename(file),
 		...(args.description !== undefined
 			? { description: args.description }
 			: {}),
-		...(draftId ? { draftId } : {}),
-		...(editToken ? { editToken } : {}),
 		metadata: collectMetadata(file, html, VERSION),
 		...(token ? { token } : {})
-	});
+	};
+	const result = await api
+		.upload({
+			...uploadInput,
+			...(draftId ? { draftId } : {}),
+			...(editToken ? { editToken } : {})
+		})
+		.catch((error: unknown) => {
+			if (
+				!saved ||
+				args.draftId !== undefined ||
+				!(error instanceof ApiError) ||
+				error.status !== 404
+			) {
+				throw error;
+			}
+
+			console.log(
+				`Draft ${saved.draftId} no longer exists. Publishing a new draft…`
+			);
+			return api.upload(uploadInput);
+		});
 	await setDraft(file, {
 		apiUrl: args.apiUrl,
 		draftId: result.draftId,
 		...(result.editToken ? { editToken: result.editToken } : {}),
-		...(editToken && !result.editToken ? { editToken } : {})
+		...(!token && editToken && !result.editToken ? { editToken } : {})
 	});
 	console.log(result.url);
 	console.log(`Draft ${result.draftId} · version ${result.version}`);
