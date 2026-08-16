@@ -9,8 +9,7 @@ import { login } from './auth.js';
 import { collectMetadata } from './metadata.js';
 import { getDraft, getToken, removeToken, setDraft } from './storage.js';
 import type { DraftSummary } from './types.js';
-
-const VERSION = '0.0.0';
+import { VERSION } from './version.js';
 
 export async function run(argv = process.argv.slice(2)): Promise<void> {
 	const args = parseArgs(argv);
@@ -59,12 +58,11 @@ async function upload(
 		throw new Error('pp accepts HTML files (.html or .htm).');
 	const html = await readFile(file, 'utf8');
 
-	let token = args.anonymous ? undefined : await getToken(args.apiUrl);
-	if (!args.anonymous && !token) token = await login(api, args.apiUrl);
+	let token = await getToken(args.apiUrl);
+	if (!token) token = await login(api, args.apiUrl);
 
 	const saved = args.newDraft ? undefined : await getDraft(file, args.apiUrl);
 	const draftId = args.draftId ?? saved?.draftId;
-	const editToken = saved?.draftId === draftId ? saved?.editToken : undefined;
 	console.log(
 		draftId ? `Publishing a new version of ${draftId}…` : 'Publishing…'
 	);
@@ -75,13 +73,12 @@ async function upload(
 			? { description: args.description }
 			: {}),
 		metadata: collectMetadata(file, html, VERSION),
-		...(token ? { token } : {})
+		token
 	};
 	const result = await api
 		.upload({
 			...uploadInput,
-			...(draftId ? { draftId } : {}),
-			...(editToken ? { editToken } : {})
+			...(draftId ? { draftId } : {})
 		})
 		.catch((error: unknown) => {
 			if (
@@ -100,9 +97,7 @@ async function upload(
 		});
 	await setDraft(file, {
 		apiUrl: args.apiUrl,
-		draftId: result.draftId,
-		...(result.editToken ? { editToken: result.editToken } : {}),
-		...(!token && editToken && !result.editToken ? { editToken } : {})
+		draftId: result.draftId
 	});
 	console.log(result.url);
 	console.log(`Draft ${result.draftId} · version ${result.version}`);
@@ -149,7 +144,7 @@ async function requireToken(apiUrl: string): Promise<string> {
 	const token = await getToken(apiUrl);
 	if (!token)
 		throw new Error(
-			`Not signed in to ${apiUrl}. Run: pp auth login --api-url ${apiUrl}`
+			`Not signed in to ${apiUrl}. Run: npx @rraf/pp auth login --api-url ${apiUrl}`
 		);
 	return token;
 }
@@ -164,12 +159,14 @@ async function main(): Promise<void> {
 	} catch (error) {
 		if (error instanceof UsageError) {
 			console.error(error.message);
-			console.error('Run pp --help for usage.');
+			console.error('Run npx @rraf/pp --help for usage.');
 			process.exitCode = 2;
 			return;
 		}
 		if (error instanceof ApiError && error.status === 401) {
-			console.error(`${error.message} Run pp auth login to sign in again.`);
+			console.error(
+				`${error.message} Run npx @rraf/pp auth login to sign in again.`
+			);
 		} else {
 			console.error(error instanceof Error ? error.message : String(error));
 		}

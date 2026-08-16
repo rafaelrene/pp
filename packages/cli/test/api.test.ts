@@ -13,14 +13,12 @@ describe('API response parsing', () => {
 			parseUploadResponse({
 				draftId: 'draft-1',
 				version: 2,
-				url: 'https://plans.example/draft-1',
-				editToken: 'secret'
+				url: 'https://plans.example/draft-1'
 			})
 		).toEqual({
 			draftId: 'draft-1',
 			version: 2,
-			url: 'https://plans.example/draft-1',
-			editToken: 'secret'
+			url: 'https://plans.example/draft-1'
 		});
 	});
 

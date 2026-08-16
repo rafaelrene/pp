@@ -92,10 +92,7 @@ async function readDrafts(): Promise<DraftsFile> {
 			continue;
 		drafts[file] = {
 			apiUrl: entry.apiUrl,
-			draftId: entry.draftId,
-			...(typeof entry.editToken === 'string'
-				? { editToken: entry.editToken }
-				: {})
+			draftId: entry.draftId
 		};
 	}
 	return { version: 1, drafts };

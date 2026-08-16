@@ -1,11 +1,11 @@
 # pp
 
-`pp` is a small service and CLI for publishing a local HTML file and receiving a public URL. The CLI can publish anonymously or authenticate through a browser using Shoo. Re-uploading the same local file creates a new version at the same URL, and authenticated drafts appear in the web dashboard.
+`pp` is a small service and CLI for publishing a local HTML file and receiving a public URL. The CLI authenticates through a browser using Shoo. Re-uploading the same local file creates a new version at the same URL, and authenticated drafts appear in the web dashboard.
 
 ## Repository
 
 - `apps/web` — SvelteKit application, HTTP API, dashboard, authentication, HTML serving, and SQLite persistence.
-- `packages/cli` — dependency-free TypeScript CLI intended to be invoked as `npx pp`.
+- `packages/cli` — dependency-free TypeScript CLI published as `@rraf/pp` and invoked with `npx @rraf/pp`.
 - `Dockerfile` and `compose.yml` — single-replica container deployment with persistent SQLite storage.
 
 ## Technologies

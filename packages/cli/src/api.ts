@@ -49,7 +49,6 @@ export class ApiClient {
 		filename: string;
 		description?: string;
 		draftId?: string;
-		editToken?: string;
 		metadata: UploadMetadata;
 		token?: string;
 	}): Promise<UploadResponse> {
@@ -160,8 +159,7 @@ export function parseUploadResponse(value: unknown): UploadResponse {
 		url:
 			typeof body.url === 'string'
 				? requireUrl(body, 'url')
-				: requireUrl(body, 'publicUrl'),
-		...(typeof body.editToken === 'string' ? { editToken: body.editToken } : {})
+				: requireUrl(body, 'publicUrl')
 	};
 }
 

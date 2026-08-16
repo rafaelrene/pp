@@ -1,7 +1,6 @@
 export type DraftReference = {
 	apiUrl: string;
 	draftId: string;
-	editToken?: string;
 };
 
 export type UploadMetadata = {
@@ -19,7 +18,6 @@ export type UploadResponse = {
 	draftId: string;
 	version: number;
 	url: string;
-	editToken?: string;
 };
 
 export type Account = {

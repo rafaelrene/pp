@@ -1,4 +1,4 @@
-export const DEFAULT_API_URL = 'http://localhost:5173';
+export const DEFAULT_API_URL = 'https://plans.rafr.dev';
 
 type CommonOptions = {
 	apiUrl: string;
@@ -8,7 +8,6 @@ export type CliArguments =
 	| ({
 			command: 'upload';
 			file: string;
-			anonymous: boolean;
 			newDraft: boolean;
 			draftId?: string;
 			description?: string;
@@ -73,7 +72,6 @@ export function parseArgs(
 	}
 
 	if (first === 'upload') tokens.shift();
-	const anonymous = takeFlag(tokens, '--anonymous');
 	const newDraft = takeFlag(tokens, '--new');
 	const draftId = readOption(tokens, '--draft');
 	const description = readOption(tokens, '--description');
@@ -86,7 +84,6 @@ export function parseArgs(
 	return {
 		command: 'upload',
 		file: tokens[0],
-		anonymous,
 		newDraft,
 		...(draftId ? { draftId } : {}),
 		...(description !== undefined ? { description } : {}),
@@ -162,7 +159,6 @@ Usage:
   pp list [--json] [--api-url <url>]
 
 Upload options:
-  --anonymous           Upload without signing in
   --new                 Start a new draft for this file
   --draft <id>          Upload a new version of a specific draft
   --description <text>  Describe the draft

@@ -67,8 +67,7 @@ describe('upload', () => {
 				drafts: {
 					[file]: {
 						apiUrl,
-						draftId: 'olddraft1234',
-						editToken: 'old-edit-token'
+						draftId: 'olddraft1234'
 					}
 				}
 			})
@@ -86,9 +85,9 @@ describe('upload', () => {
 
 		expect(requests).toHaveLength(2);
 		expect(requests[0]).toMatchObject({
-			draftId: 'olddraft1234',
-			editToken: 'old-edit-token'
+			draftId: 'olddraft1234'
 		});
+		expect(requests[0]).not.toHaveProperty('editToken');
 		expect(requests[1]).not.toHaveProperty('draftId');
 		expect(
 			JSON.parse(await readFile(join(configDirectory, 'drafts.json'), 'utf8'))

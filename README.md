@@ -2,11 +2,8 @@
 
 Publish a self-contained HTML file and get a public URL.
 
-> [!IMPORTANT]
-> `pp` is already owned by someone else on npm. The package uses that name to preserve the intended UX, but do not publish or run the registry command until the name is transferred; use the local development command below in the meantime.
-
 ```sh
-npx pp ./plan.html
+npx @rraf/pp ./plan.html
 ```
 
 Running the command for the first time opens a browser for Shoo sign-in. Running it again for the same local file publishes a new version at the same URL.
@@ -23,10 +20,10 @@ cp .env.example .env
 pnpm dev
 ```
 
-The site and the unpublished CLI both default to `http://localhost:5173`. Exercise them together with:
+The CLI defaults to `https://plans.rafr.dev`. Exercise it against the local site with:
 
 ```sh
-pnpm --filter pp dev -- ./plan.html
+pnpm --filter @rraf/pp dev -- ./plan.html --api-url http://localhost:5173
 ```
 
 Useful workspace commands:
@@ -42,15 +39,14 @@ pnpm build
 ## CLI
 
 ```sh
-npx pp ./plan.html                    # publish, or update this file's draft
-npx pp ./plan.html --new              # publish it as a separate draft
-npx pp ./plan.html --anonymous        # skip sign-in
-npx pp auth login
-npx pp whoami
-npx pp list
+npx @rraf/pp ./plan.html       # publish, or update this file's draft
+npx @rraf/pp ./plan.html --new # publish it as a separate draft
+npx @rraf/pp auth login
+npx @rraf/pp whoami
+npx @rraf/pp list
 ```
 
-Run `npx pp --help` for every option. Credentials are stored in `~/.pp/credentials.json`; stable local file-to-draft mappings are stored in `~/.pp/drafts.json`. Both files are created with owner-only permissions.
+Run `npx @rraf/pp --help` for every option. Credentials are stored in `~/.pp/credentials.json`; stable local file-to-draft mappings are stored in `~/.pp/drafts.json`. Both files are created with owner-only permissions.
 
 ## Configuration
 

@@ -6,9 +6,8 @@ describe('parseArgs', () => {
 		expect(parseArgs(['plan.html'], {})).toEqual({
 			command: 'upload',
 			file: 'plan.html',
-			anonymous: false,
 			newDraft: false,
-			apiUrl: 'http://localhost:5173'
+			apiUrl: 'https://plans.rafr.dev'
 		});
 	});
 
@@ -20,7 +19,6 @@ describe('parseArgs', () => {
 					'--description',
 					'First pass',
 					'--api-url=https://plans.example/',
-					'--anonymous',
 					'plan.html'
 				],
 				{}
@@ -28,7 +26,6 @@ describe('parseArgs', () => {
 		).toEqual({
 			command: 'upload',
 			file: 'plan.html',
-			anonymous: true,
 			newDraft: false,
 			description: 'First pass',
 			apiUrl: 'https://plans.example'
@@ -36,13 +33,18 @@ describe('parseArgs', () => {
 	});
 
 	it('ignores the separator forwarded by pnpm scripts', () => {
-		expect(parseArgs(['--', 'plan.html', '--anonymous'], {})).toEqual({
+		expect(parseArgs(['--', 'plan.html'], {})).toEqual({
 			command: 'upload',
 			file: 'plan.html',
-			anonymous: true,
 			newDraft: false,
-			apiUrl: 'http://localhost:5173'
+			apiUrl: 'https://plans.rafr.dev'
 		});
+	});
+
+	it('rejects the removed anonymous option', () => {
+		expect(() => parseArgs(['plan.html', '--anonymous'], {})).toThrow(
+			UsageError
+		);
 	});
 
 	it('accepts list JSON output', () => {
