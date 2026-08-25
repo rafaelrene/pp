@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync, symlinkSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -20,7 +20,7 @@ describe('development command', () => {
 		expect(result.stdout).toContain('pp — publish an HTML file');
 	});
 
-	it('runs through an installed bin symlink', () => {
+	it('runs the binary installed from the npm tarball', () => {
 		const build = spawnSync('pnpm', ['run', 'build'], {
 			cwd: packageDirectory,
 			encoding: 'utf8'
@@ -29,9 +29,53 @@ describe('development command', () => {
 
 		const directory = mkdtempSync(join(tmpdir(), 'pp-bin-test-'));
 		try {
-			const bin = join(directory, 'pp');
-			symlinkSync(join(packageDirectory, 'dist/index.js'), bin);
-			const result = spawnSync(process.execPath, [bin, '--version'], {
+			const pack = spawnSync(
+				'npm',
+				[
+					'pack',
+					'--dry-run=false',
+					'--pack-destination',
+					directory,
+					'--ignore-scripts'
+				],
+				{
+					cwd: packageDirectory,
+					encoding: 'utf8'
+				}
+			);
+			expect(pack.status).toBe(0);
+
+			const tarballs = readdirSync(directory).filter((file) =>
+				file.endsWith('.tgz')
+			);
+			expect(tarballs).toHaveLength(1);
+			const tarball = tarballs[0];
+			if (!tarball) throw new Error('npm pack did not create a tarball.');
+
+			const installDirectory = join(directory, 'consumer');
+			mkdirSync(installDirectory);
+			const install = spawnSync(
+				'npm',
+				[
+					'install',
+					'--dry-run=false',
+					'--offline',
+					'--ignore-scripts',
+					'--no-audit',
+					'--no-fund',
+					'--package-lock=false',
+					join(directory, tarball)
+				],
+				{
+					cwd: installDirectory,
+					encoding: 'utf8'
+				}
+			);
+			expect(install.status).toBe(0);
+
+			const executable = process.platform === 'win32' ? 'pp.cmd' : 'pp';
+			const bin = join(installDirectory, 'node_modules', '.bin', executable);
+			const result = spawnSync(bin, ['--version'], {
 				encoding: 'utf8'
 			});
 

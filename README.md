@@ -48,6 +48,37 @@ npx @rraf/pp list
 
 Run `npx @rraf/pp --help` for every option. Credentials are stored in `~/.pp/credentials.json`; stable local file-to-draft mappings are stored in `~/.pp/drafts.json`. Both files are created with owner-only permissions.
 
+## Release the CLI
+
+CLI releases use conventional squash-merge titles. Release Please considers
+only commits that touch `packages/cli`.
+
+| Pull request title                                    | Version change before 1.0 |
+| ----------------------------------------------------- | ------------------------- |
+| `feat(cli): add JSON output`                          | Minor                     |
+| `fix(cli): handle an empty file`                      | Patch                     |
+| `perf(cli): reduce startup time`                      | Patch                     |
+| `feat(cli)!: change authentication`                   | Minor                     |
+| `docs`, `chore`, `refactor`, `test`, `build`, or `ci` | None unless breaking      |
+
+To publish:
+
+1. Merge the normal CLI pull request after CI passes.
+2. Review the draft release pull request that Release Please creates or updates.
+3. Click **Ready for review** to start CI, then squash-merge after it passes.
+4. The release workflow creates `vX.Y.Z` and publishes the same version to npm.
+
+Several CLI pull requests can accumulate in one release pull request. To publish
+`1.0.0`, include `Release-As: 1.0.0` in the normal pull request body.
+
+If npm publishing fails after GitHub creates the release, rerun only the failed
+`Publish to npm` job. If a broken version reaches npm, deprecate it and publish a
+patch rather than trying to reuse or unpublish the version.
+
+The npm package must trust the GitHub Actions workflow `release.yml` for the
+`rafaelrene/pp` repository, with no environment and `npm publish` allowed. npm
+publishes through OIDC, so GitHub must not store an npm token.
+
 ## Configuration
 
 The web app reads these environment variables:
