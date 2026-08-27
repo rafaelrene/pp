@@ -18,8 +18,7 @@ const forbiddenElements = new Set([
 	'frameset',
 	'iframe',
 	'link',
-	'object',
-	'script'
+	'object'
 ]);
 const urlAttributes = new Set([
 	'action',
@@ -48,6 +47,12 @@ export function validateHtml(html: string): HtmlValidation {
 function walk(node: HtmlNode, errors: Set<string>): void {
 	const tag = node.tagName?.toLowerCase();
 	if (tag && forbiddenElements.has(tag)) errors.add(`<${tag}> is not allowed.`);
+	if (
+		tag === 'script' &&
+		node.attrs?.some((attribute) => attribute.name.toLowerCase() === 'src')
+	) {
+		errors.add('External scripts are not allowed.');
+	}
 
 	for (const attribute of node.attrs ?? []) {
 		const name = attribute.name.toLowerCase();
@@ -85,6 +90,7 @@ function walk(node: HtmlNode, errors: Set<string>): void {
 export const draftContentSecurityPolicy = [
 	"default-src 'none'",
 	"script-src 'none'",
+	"script-src-elem 'unsafe-inline'",
 	"style-src 'unsafe-inline'",
 	'img-src https: data:',
 	'font-src data:',

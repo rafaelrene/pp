@@ -114,4 +114,4 @@ runbook.
 
 ## Security model
 
-Draft links are intentionally public but marked as unindexable. Never upload secrets or confidential material. Uploaded HTML is size-limited, rejects active and embedding features such as scripts, event handlers, forms, iframes, and remote CSS URLs, and is served with a restrictive content security policy. Treat uploaded documents as untrusted even with those defenses.
+Draft links are intentionally public but marked as unindexable. Never upload secrets or confidential material. Uploaded HTML is size-limited and may contain self-contained inline scripts for document interaction and browser storage. External scripts, event handlers, forms, iframes, and remote CSS URLs remain forbidden. The content security policy blocks fetch, XHR, and WebSocket connections, and the browser session cookie remains `HttpOnly`. Only publish HTML you trust because visitors execute its inline scripts.

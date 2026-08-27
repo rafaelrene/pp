@@ -17,4 +17,13 @@ describe('draft response', () => {
 
 		expect(response.headers.get('x-robots-tag')).toBe('noindex, nofollow');
 	});
+
+	it('allows inline script elements without allowing other script sources', () => {
+		const response = draftResponse('draft1234567');
+		const policy = response.headers.get('content-security-policy');
+
+		expect(policy).toContain("script-src 'none'");
+		expect(policy).toContain("script-src-elem 'unsafe-inline'");
+		expect(policy).toContain("connect-src 'none'");
+	});
 });
